@@ -22,7 +22,7 @@ body {
    NAVIGATION (unchanged)
    ------------------------------------------------- */
 .nav {
-  position: fixed;
+  position: sticky;
   top: 1rem;
   left: 8%;
   right: 8%;
