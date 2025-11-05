@@ -18,11 +18,8 @@ body {
   margin-inline: 8%;
   max-width: 84%;
 }
-/* -------------------------------------------------
-   NAVIGATION (unchanged)
-   ------------------------------------------------- */
 .nav {
-  position: sticky;
+  position: fixed;
   top: 1rem;
   left: 8%;
   right: 8%;
@@ -34,13 +31,14 @@ body {
   justify-content: space-between;
   align-items: center;
   z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 .nav-desktop {
   display: flex;
   width: 100%;
   justify-content: space-around;
   align-items: center;
+  gap: 1rem;
 }
 .nav-left,
 .nav-right {
@@ -48,16 +46,17 @@ body {
   align-items: center;
   gap: 1.8rem;
 }
-
 .nav-link {
   text-decoration: none;
   color: #000;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 500;
   margin-inline-end: 10px;
 }
-.nav .icons svg {
+.nav .icons svg,
+.menu-actions svg {
   width: 25px;
+  height: 25px;
 }
 .flag {
   width: 45px;
@@ -68,88 +67,134 @@ body {
   color: #fff;
   padding: 0.35rem 1.2rem;
   border-radius: 1rem;
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
 }
 
+/* hamburger (hidden on desktop) */
 .hamburger {
   display: none;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
   background: none;
   border: none;
   cursor: pointer;
   z-index: 1100;
+  align-items: center;
+  justify-content: center;
+  width: 25px;
+  height: 25px;
+  border-radius: 10px;
 }
 .hamburger span {
   width: 28px;
   height: 3px;
-  background: #333;
+  background: #0b0b0b;
   border-radius: 2px;
-  transition: 0.3s;
+  transition: transform 0.28s ease, opacity 0.28s ease;
+  display: block;
+}
+.hamburger span + span {
+  margin-top: 2px;
 }
 
-/* Mobile menu */
+/* active -> X */
+.hamburger.active span:nth-child(1) {
+  transform: translateY(9px) rotate(45deg);
+}
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+.hamburger.active span:nth-child(3) {
+  transform: translateY(-9px) rotate(-45deg);
+}
+
+/* --------------- Overlay + Centered Panel (mobile menu) --------------- */
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.28s ease;
+  z-index: 1040;
+}
+.menu-overlay.active {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
 .mobile-menu {
   position: fixed;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.98);
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  transition: left 0.4s ease;
-  z-index: 1050;
+  left: 50%;
+  transform: translate(-50%, -8px) scale(0.995);
+  width: clamp(280px, 60%, 420px);
+  max-height: calc(80vh);
   overflow-y: auto;
+  background: #e6e8e8;
+  padding: 1.6rem;
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  visibility: hidden;
+  transition: transform 0.32s cubic-bezier(0.2, 0.9, 0.2, 1), opacity 0.32s ease,
+    visibility 0s linear 0.32s;
+  z-index: 1050;
+  /* initial top will be set by JS */
 }
 .mobile-menu.active {
-  left: 0;
+  transform: translate(-50%, 0) scale(1);
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
 }
-.close-btn {
-  position: absolute;
-  top: 1.5rem;
-  left: 1.5rem;
-  font-size: 2rem;
-  background: none;
-  border: none;
-  color: #333;
-  cursor: pointer;
-}
+
+/* NOTE: close-btn removed from view — keep style removed */
+
+/* menu content styling (kept close to your design) */
 .menu-list {
   list-style: none;
-  margin-top: 4rem;
-  font-size: 1.4rem;
+  margin: 1.2rem 0 0 0;
+  padding: 0;
+  font-size: 1.2rem;
   font-weight: 500;
 }
 .menu-list li {
-  margin: 1.2rem 0;
+  margin: 1rem 0;
 }
 .menu-list a {
   text-decoration: none;
-  color: #333;
-  transition: color 0.2s;
+  color: #111;
+  display: block;
+  padding: 6px 4px;
+  transition: color 0.18s;
 }
 .menu-list a:hover {
   color: #d97d0d;
 }
+
 .menu-social {
   display: flex;
-  gap: 1.5rem;
-  margin: 2rem 0;
+  gap: 1.2rem;
+  margin: 1.4rem 0;
   justify-content: center;
+  flex-wrap: wrap;
 }
 .menu-social a {
-  font-size: 1.3rem;
-  color: #25d366;
   text-decoration: none;
+  color: #25d366;
+  font-size: 1rem;
 }
+
 .menu-actions {
   display: flex;
   justify-content: center;
   gap: 1rem;
-  margin-top: auto;
-  padding-bottom: 2rem;
+  margin-top: 1.2rem;
+  padding-bottom: 0.6rem;
 }
 .action-btn {
   width: 50px;
@@ -161,8 +206,51 @@ body {
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  font-size: 1.2rem;
-  box-shadow: 0 4px 10px rgba(217, 125, 13, 0.3);
+  font-size: 1.1rem;
+  box-shadow: 0 4px 10px rgba(217, 125, 13, 0.25);
+}
+
+/* tweak spacing so it looks like your screenshot */
+.mobile-menu .menu-list {
+  margin-top: 1.8rem;
+  padding-left: 6px;
+}
+
+.mobile-menu .social {
+  justify-content: center;
+}
+/* small accessibility focus visible */
+a:focus,
+button:focus {
+  outline-offset: 2px;
+}
+
+/* ---------------- Responsive rules ---------------- */
+/* show hamburger only on small screens and hide desktop links */
+@media (max-width: 900px) {
+  .nav-left {
+    display: none;
+  } /* hide full links on small screens */
+  .hamburger {
+    display: flex;
+  }
+  .nav-right {
+    gap: 1rem;
+  }
+  .nav {
+    left: 4%;
+    right: 4%;
+    max-width: 92%;
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* keep desktop layout for wider screens */
+@media (min-width: 901px) {
+  .mobile-menu,
+  .menu-overlay {
+    display: none;
+  }
 }
 
 /* -------------------------------------------------
@@ -350,6 +438,7 @@ body {
   max-width: 720px;
   padding: 0 2rem;
   z-index: 2;
+  text-align: justify;
 }
 .hero-content h1 {
   font-size: 4rem;
@@ -365,14 +454,20 @@ body {
    RESPONSIVE
    ------------------------------------------------- */
 @media (max-width: 860px) {
+  .nav {
+    padding: 1.5rem 2.5rem;
+  }
+  .hero-content {
+    display: none !important;
+  }
   .nav-desktop {
     display: none;
   }
   .hamburger {
     display: flex;
     position: absolute;
-    right: 1.5rem;
-    top: 1.2rem;
+    left: 1.5rem;
+    top: 1rem;
   }
 
   .hero-content h1 {
@@ -380,24 +475,27 @@ body {
   }
 
   .pse-toggle {
-    flex-direction: row;
+    display: none !important;
+    /* flex-direction: row;
     right: auto;
     top: auto;
     bottom: 12rem;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%); */
   }
 
   .globe-cutout {
-    bottom: 140px;
+    bottom: 170px;
     width: 160px;
     height: 160px;
   }
 
   .stats-panel {
-    width: 95%;
+    width: 100%;
     padding: 2.8rem 1rem 1.5rem;
     border-radius: 2rem 2rem 0 0;
+    background: transparent;
+    bottom: -220px;
   }
 
   .stats-panel::after {
@@ -410,6 +508,7 @@ body {
   }
   .stats-grid {
     gap: 1rem;
+    flex-direction: column;
   }
   .stat-item {
     padding: 0.8rem 1rem;
@@ -468,8 +567,6 @@ body {
 .gallery-item:hover img {
   transform: scale(1.14);
 }
-
-/* ---------- Layout rules for specific items ---------- */
 
 /* 1st image: tall, spans 2 rows (left column) */
 .item-tall {
@@ -558,8 +655,7 @@ body {
   width: 100%;
   background-color: #fff;
   padding-bottom: 25px;
-  height: 110vh;
-  min-height: 100vh;
+  height: 50vw;
 }
 .what-we-do {
   display: flex;
@@ -572,17 +668,14 @@ body {
   border-bottom-right-radius: 25px;
   height: 100%;
 }
-@media (max-width: 768px) {
-  .what-we-do {
-    flex-direction: column;
-  }
-}
 
 /* Left Section Styles */
 .left-content {
+  width: 45%;
   padding-left: 7vw;
   padding-right: 7vw;
   padding-top: 8vw;
+  padding-bottom: 8vw;
   background-color: #0e0e0e;
   display: flex;
   flex-direction: column;
@@ -599,7 +692,7 @@ body {
 .left-content h2::after {
   content: "";
   position: absolute;
-  bottom: 5px;
+  bottom: 0;
   left: 0;
   background-color: #bc6c254d;
   width: 95px;
@@ -622,9 +715,33 @@ body {
   border-top-right-radius: 25px;
   border-bottom-right-radius: 25px;
   background-color: #001621;
-  padding: 30px;
+  padding-inline-start: 5.2vw;
+  padding-top: 3vw;
   justify-content: center;
   align-items: center;
+}
+@media (max-width: 768px) {
+  .doing {
+    height: auto;
+  }
+  .what-we-do {
+    flex-direction: column;
+    max-width: 100%;
+  }
+  .left-content {
+    text-align: center;
+    width: 100%;
+  }
+  .left-content h2 {
+    font-size: 24px;
+  }
+  .left-content h2::after {
+    left: 145px;
+  }
+  .left-content p {
+    width: 100%;
+    font-size: 20px;
+  }
 }
 /* Individual Steps */
 .step {
@@ -649,19 +766,20 @@ body {
 }
 
 .step img {
-  width: 250px;
-  height: 250px;
+  width: 10vw;
+  height: 10vw;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid white;
 }
 
 .step-description span {
-  font-size: 1.5rem;
+  font-size: 1rem;
   margin-right: 2px;
   color: #fff;
   text-decoration: underline;
   font-weight: bold;
+  display: block;
 }
 
 .step-description p {
@@ -670,7 +788,31 @@ body {
   color: #ccc;
   font-weight: 500;
 }
-
+@media (max-width: 768px) {
+  .step {
+    padding: 2rem;
+    width: 25rem;
+  }
+  .step img {
+    width: 6rem;
+    height: 6rem;
+  }
+  .step-description {
+    margin-inline-start: 20px;
+    font-size: 1rem;
+    width: 13rem;
+  }
+  .step-description span {
+    font-size: 1rem;
+  }
+  .right-content {
+    gap: 0;
+  }
+  .step::after {
+    bottom: -10px;
+    left: 19%;
+  }
+}
 .info-section {
   width: 100%;
   background: #fff;
@@ -687,29 +829,24 @@ body {
 .info-row2 {
   padding-bottom: 30px;
 }
-.info-image {
-  border-top-right-radius: 50%;
-  border-bottom-right-radius: 50%;
-  width: 50%;
-}
+.info-image,
 .info-image2 {
-  border-top-left-radius: 50%;
-  border-bottom-left-radius: 50%;
   width: 50%;
 }
+
 .info-image img {
   width: 100%;
   max-width: 100%;
   object-fit: cover;
-  border-top-right-radius: 50%;
-  border-bottom-right-radius: 50%;
+  border-start-end-radius: 50%;
+  border-end-end-radius: 50%;
 }
 .info-image2 img {
   width: 100%;
   max-width: 100%;
   object-fit: cover;
-  border-top-left-radius: 50%;
-  border-bottom-left-radius: 50%;
+  border-start-start-radius: 50%;
+  border-end-start-radius: 50%;
 }
 
 .info-text,
@@ -752,7 +889,7 @@ body {
   font-size: 1.3rem;
   font-weight: 500;
   line-height: 1.6;
-  color: rgb(8 47 73);
+  color: #020202;
   width: 500px;
 }
 
@@ -779,7 +916,7 @@ body {
   }
   .info-text h2::after,
   .info-text2 h2::after {
-    left: 83px;
+    left: 90px;
   }
 }
 .values {
@@ -803,13 +940,13 @@ body {
 } /* ---------- Content area ---------- */
 .content-area {
   flex: 1;
-  padding: 72px 64px;
+  padding: 150px 134px;
   color: #fff;
   position: relative;
 }
 .content-area h2 {
-  font-size: 28px;
-  font-weight: 800;
+  font-size: 1.875rem;
+  font-weight: 900;
   margin: 0 0 18px 0;
   display: flex;
   align-items: center;
@@ -827,19 +964,21 @@ body {
   margin: 0 0 44px 0;
   color: #e6f0f6;
   max-width: 680px;
-  font-size: 18px;
+  font-size: 1.425rem;
+  margin-top: 51px;
   font-weight: 600;
   line-height: 1.6;
   transition: opacity 160ms ease, transform 160ms ease;
 }
 .content-area .link {
-  font-size: 16px;
-  color: #cfe8f2;
   text-decoration: none;
   font-weight: 700;
   position: relative;
   display: inline-block;
   padding-bottom: 6px;
+  margin: 100px 0 0 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.5vw;
 }
 .content-area .link::after {
   content: "";
@@ -880,12 +1019,12 @@ body {
   scrollbar-width: none;
 } /* Each tab is a button */
 .tab {
-  flex: 0 0 140px; /* fixed width so centering is predictable */
+  flex: 0 0 25%; /* fixed width so centering is predictable */
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 17px;
   color: #fff;
   text-transform: uppercase;
   cursor: pointer;
@@ -946,22 +1085,28 @@ body {
     border-top: 1px solid rgba(255, 255, 255, 0.03);
   }
   .tabs-inner {
-    flex-direction: column;
+    flex-direction: row;
     overflow-y: auto;
     overflow-x: hidden;
     height: 100%;
   }
   .tab {
-    flex: 0 0 auto;
     writing-mode: horizontal-tb;
     transform: rotate(0deg);
-    padding: 14px 18px;
+    padding: 14px 10px;
+    font-size: 14px;
+    font-weight: 500;
     justify-content: flex-start;
     border-left: none;
     border-bottom: 1px solid #232323;
   } /* show a small scrollbar on mobile if desired */
   .tabs-inner::-webkit-scrollbar {
     width: 8px;
+  }
+}
+@media (max-width: 768px) {
+  .values-section {
+    width: 100%;
   }
 }
 @media (max-width: 600px) {
@@ -992,15 +1137,7 @@ body {
   width: 50%;
   margin-left: 30px;
 }
-@media (max-width: 768px) {
-  .container-section .container {
-    flex-direction: column;
-    align-items: center;
-  }
-  .text-content {
-    align-self: baseline;
-  }
-}
+
 .text-content h2 {
   color: rgb(8 47 73);
   font-size: 50px;
@@ -1024,22 +1161,9 @@ body {
 .text-content p {
   margin: 10px 0;
   color: rgb(8 47 73);
-  width: 400px;
   font-size: 22px;
   font-weight: 700;
 }
-
-.more-info-button {
-  padding: 10px;
-  background: var(--mainColor);
-  border-radius: 25px;
-  font-size: 15px;
-  width: 190px;
-  border: none;
-  color: #fff;
-  cursor: pointer;
-}
-
 .image-container {
   width: 50%;
   background: #f6f6f6;
@@ -1053,6 +1177,41 @@ body {
   width: 500px;
   max-width: 100%;
   height: auto;
+}
+@media (max-width: 768px) {
+  .container-section .container {
+    flex-direction: column;
+    align-items: center;
+    max-width: 100%;
+    margin-inline: 0;
+  }
+  .text-content {
+    align-self: baseline;
+    width: 100%;
+    text-align: center;
+  }
+  .text-content h2 {
+    width: 80%;
+    font-size: 32px;
+  }
+  .text-content h2::after {
+    bottom: 50px;
+    left: 70px;
+  }
+  .text-content p {
+    width: 80%;
+    font-size: 1.5rem;
+  }
+  .text-content {
+  }
+  .info-text,
+  .info-text2 {
+    text-align: center;
+  }
+  .info-text p,
+  .info-text2 p {
+    width: 100%;
+  }
 }
 /* End containerr */
 /* start news */

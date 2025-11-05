@@ -26,37 +26,87 @@ document.addEventListener("DOMContentLoaded", () => {
     if (pseBtns[0]) pseBtns[0].click();
   }
 
-  // === Mobile Menu (SAFE) ===
+  const nav = document.getElementById("siteNav");
   const hamburger = document.querySelector(".hamburger");
-  const mobileMenu = document.getElementById("mobileMenu"); // Must have ID!
-  const closeBtn = document.querySelector(".close-btn");
+  const mobileMenu = document.getElementById("mobileMenu");
+  // closeBtn removed intentionally - hamburger is the close control now
+  const overlay = document.getElementById("menuOverlay");
 
-  // Only run if elements exist
-  if (hamburger && mobileMenu && closeBtn) {
-    // Open menu
+  if (nav && hamburger && mobileMenu && overlay) {
+    // place the panel under the nav (account for scroll)
+    function positionMenuCenter() {
+      const rect = nav.getBoundingClientRect();
+      const top = rect.bottom + window.scrollY + 24; // small gap under nav
+      mobileMenu.style.top = `${top}px`;
+      // calculate max height available under nav
+      const available = window.innerHeight - (rect.bottom + 24);
+      mobileMenu.style.maxHeight = `${Math.max(220, available)}px`;
+    }
+
+    function openMenu() {
+      positionMenuCenter();
+      mobileMenu.classList.add("active");
+      overlay.classList.add("active");
+      hamburger.classList.add("active");
+      mobileMenu.setAttribute("aria-hidden", "false");
+      overlay.setAttribute("aria-hidden", "false");
+      hamburger.setAttribute("aria-expanded", "true");
+      // focus first interactive element for accessibility
+      const first = mobileMenu.querySelector("a, button");
+      if (first) first.focus();
+      // prevent background scroll
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeMenu() {
+      mobileMenu.classList.remove("active");
+      overlay.classList.remove("active");
+      hamburger.classList.remove("active");
+      mobileMenu.setAttribute("aria-hidden", "true");
+      overlay.setAttribute("aria-hidden", "true");
+      hamburger.setAttribute("aria-expanded", "false");
+      document.body.style.overflow = "";
+      hamburger.focus();
+    }
+
+    // toggle by hamburger (open/close)
     hamburger.addEventListener("click", (e) => {
       e.stopPropagation();
-      mobileMenu.classList.add("active");
+      mobileMenu.classList.contains("active") ? closeMenu() : openMenu();
     });
 
-    // Close with X button
-    closeBtn.addEventListener("click", () => {
-      mobileMenu.classList.remove("active");
-    });
+    // close when clicking on overlay
+    overlay.addEventListener("click", () => closeMenu());
 
-    // Close when clicking outside content
-    mobileMenu.addEventListener("click", (e) => {
-      if (e.target === mobileMenu) {
-        mobileMenu.classList.remove("active");
+    // close when clicking outside the panel (document)
+    document.addEventListener("click", (e) => {
+      if (
+        !mobileMenu.contains(e.target) &&
+        !hamburger.contains(e.target) &&
+        mobileMenu.classList.contains("active")
+      ) {
+        closeMenu();
       }
     });
 
-    // Optional: Close with ESC key
+    // ESC to close
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && mobileMenu.classList.contains("active")) {
-        mobileMenu.classList.remove("active");
-      }
+      if (e.key === "Escape" && mobileMenu.classList.contains("active"))
+        closeMenu();
     });
+
+    // reposition on resize/scroll while open
+    window.addEventListener("resize", () => {
+      if (mobileMenu.classList.contains("active")) positionMenuCenter();
+    });
+    window.addEventListener("scroll", () => {
+      if (mobileMenu.classList.contains("active")) positionMenuCenter();
+    });
+
+    // init aria
+    hamburger.setAttribute("aria-expanded", "false");
+    mobileMenu.setAttribute("aria-hidden", "true");
+    overlay.setAttribute("aria-hidden", "true");
   }
   const tabs = document.querySelectorAll(".tab");
 
