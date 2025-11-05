@@ -1108,6 +1108,9 @@ button:focus {
   .values-section {
     width: 100%;
   }
+  .content-area .link {
+    margin: 50px 0 0 0;
+  }
 }
 @media (max-width: 600px) {
   #valuesDescription {
